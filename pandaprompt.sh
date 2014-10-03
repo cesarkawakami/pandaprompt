@@ -29,6 +29,8 @@
 LIGHT_GREEN="\[\033[1;32m\]"
       WHITE="\[\033[1;37m\]"
  LIGHT_GRAY="\[\033[0;37m\]"
+     PURPLE="\[\033[0;35m\]"
+       CYAN="\[\033[0;36m\]"
  COLOR_NONE="\[\e[0m\]"
 
 # Detect whether the current directory is a git repository.
@@ -82,9 +84,13 @@ function set_bash_prompt () {
     BRANCH=''
   fi
 
+  # Compute which color is desired
+  desired_color=${COMPUTER_COLOR:-DBLUE}
+  eval desired_color=\$$desired_color
+
   # Set the bash prompt variable.
   export PS1="
-${LIGHT_GRAY}\u${DYELLOW}@${DBLUE}\h${GREEN}:${WHITE}\w${COLOR_NONE}${PYTHON_VIRTUALENV}${BRANCH}${LAST_RETURN_VALUE}
+${LIGHT_GRAY}\u${DYELLOW}@${desired_color}\h${GREEN}:${WHITE}\w${COLOR_NONE}${PYTHON_VIRTUALENV}${BRANCH}${LAST_RETURN_VALUE}
 \$ "
 }
 
