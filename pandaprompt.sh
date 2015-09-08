@@ -35,12 +35,12 @@ LIGHT_GREEN="\[\033[1;32m\]"
 
 # Detect whether the current directory is a git repository.
 function is_git_repository {
-  git branch > /dev/null 2>&1
+  git rev-parse --git-dir > /dev/null 2>&1
 }
 
 # Determine the branch/state information for this git repository.
 function set_git_branch {
-  rev_parse="$(git rev-parse --abbrev-ref HEAD)"
+  rev_parse="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
   if [[ ${rev_parse} != "HEAD" ]]; then
     branch="${GREEN}${rev_parse}${COLOR_NONE}"
   else
