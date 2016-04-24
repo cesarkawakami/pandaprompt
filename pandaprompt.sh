@@ -68,6 +68,10 @@ function set_virtualenv () {
   fi
 }
 
+function set_date () {
+    MY_DATE=" ${LIGHT_GRAY}$(date '+%Y/%m/%d %H:%M:%S.%3N')${COLOR_NONE}"
+}
+
 # Set the full bash prompt.
 function set_bash_prompt () {
   # Set the PROMPT_SYMBOL variable. We do this first so we don't lose the
@@ -84,13 +88,16 @@ function set_bash_prompt () {
     BRANCH=''
   fi
 
+  # Prints a date on the screen for time tracking purposes
+  set_date
+
   # Compute which color is desired
   desired_color=${COMPUTER_COLOR:-DBLUE}
   eval desired_color=\$$desired_color
 
   # Set the bash prompt variable.
   export PS1="
-${LIGHT_GRAY}\u${DYELLOW}@${desired_color}\h${GREEN}:${WHITE}\w${COLOR_NONE}${PYTHON_VIRTUALENV}${BRANCH}${LAST_RETURN_VALUE}
+${LIGHT_GRAY}\u${DYELLOW}@${desired_color}\h${GREEN}:${WHITE}\w${COLOR_NONE}${PYTHON_VIRTUALENV}${BRANCH}${LAST_RETURN_VALUE}${MY_DATE}
 \$ "
 }
 
