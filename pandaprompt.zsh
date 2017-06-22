@@ -46,16 +46,31 @@ LIGHT_GREEN="%B%F{green}"
        CYAN="%b%F{cyan}"
  COLOR_NONE="%b%f"
 
-# Detect whether the current directory is a git repository.
+# Detect whether the current directory is a git/hg repository.
 function is_git_repository {
   git rev-parse --git-dir > /dev/null 2>&1
 }
+function is_hg_repository {
+  hg root > /dev/null 2>&1
+}
 
-# Determine the branch/state information for this git repository.
+# Determine the branch/state information for this git/hg repository.
 function set_git_branch {
   rev_parse="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
   if [[ ${rev_parse} != "HEAD" ]]; then
     branch="${GREEN}${rev_parse}${COLOR_NONE}"
+  else
+    branch="${RED}<detached>${COLOR_NONE}"
+  fi
+
+  # Set the final branch string.
+  BRANCH=" ${state}${branch}${remote}${COLOR_NONE}"
+}
+function set_hg_branch {
+  bookmark_fn="$(hg root)/.hg/bookmarks.current"
+  if [[ -a "$bookmark_fn" ]]; then
+    branch_name=$(< "$bookmark_fn")
+    branch="${GREEN}${branch_name}${COLOR_NONE}"
   else
     branch="${RED}<detached>${COLOR_NONE}"
   fi
@@ -95,8 +110,10 @@ function precmd {
   set_virtualenv
 
   # Set the BRANCH variable.
-  if is_git_repository ; then
+  if is_git_repository; then
     set_git_branch
+  elif is_hg_repository; then
+    set_hg_branch
   else
     BRANCH=''
   fi
