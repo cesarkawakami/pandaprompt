@@ -110,12 +110,13 @@ function precmd {
   set_virtualenv
 
   # Set the BRANCH variable.
-  if is_git_repository; then
-    set_git_branch
-  elif is_hg_repository; then
-    set_hg_branch
-  else
-    BRANCH=''
+  BRANCH=''
+  if [[ -z "$PANDAPROMPT_DISABLE_REPO" ]]; then
+    if is_git_repository; then
+        set_git_branch
+    elif is_hg_repository; then
+        set_hg_branch
+    fi
   fi
 
   # Prints a date on the screen for time tracking purposes
