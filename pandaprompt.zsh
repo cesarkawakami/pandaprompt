@@ -100,6 +100,25 @@ function set_date {
     MY_DATE=" ${LIGHT_GRAY}$(date '+%Y/%m/%d %H:%M:%S.%3N')${COLOR_NONE}"
 }
 
+function update_vte_info {
+  # Ripped from /etc/profile.d/vte.sh in an Arch Linux install
+
+  # Not bash or zsh?
+  [ -n "${BASH_VERSION:-}" -o -n "${ZSH_VERSION:-}" ] || return 0
+
+  # Not an interactive shell?
+  [[ $- == *i* ]] || return 0
+
+  # Not running under vte?
+  [ "${VTE_VERSION:-0}" -ge 3405 ] || return 0
+
+  printf "\033]7;file://%s%s\033\\" "${HOSTNAME}" "$(/usr/lib/vte-urlencode-cwd)"
+}
+
+function update_term_title {
+  echo -ne "\033]0;${USER}@${HOST}\007"
+}
+
 # Set the full bash prompt.
 function precmd {
   # Set the PROMPT_SYMBOL variable. We do this first so we don't lose the
@@ -126,8 +145,12 @@ function precmd {
   desired_color=${COMPUTER_COLOR:-DBLUE}
   eval desired_color=\$$desired_color
 
+  # Terminal niceties
+  vte_pwd_thing=$(update_vte_info)
+  term_title=$(update_term_title)
+
   # Set the bash prompt variable.
   PROMPT="
-${LIGHT_GRAY}%n${DYELLOW}@${desired_color}%m${GREEN}:${WHITE}%~${COLOR_NONE}${PYTHON_VIRTUALENV}${BRANCH}${LAST_RETURN_VALUE}${MY_DATE}
+${vte_pwd_thing}${term_title}${LIGHT_GRAY}%n${DYELLOW}@${desired_color}%m${GREEN}:${WHITE}%~${COLOR_NONE}${PYTHON_VIRTUALENV}${BRANCH}${LAST_RETURN_VALUE}${MY_DATE}
 \$ "
 }
